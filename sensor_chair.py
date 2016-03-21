@@ -6,17 +6,7 @@ import subprocess
 import requests
 
 SERVER_URL = 'http://localhost:5000'
-
-def wait_press():
-
-	try:
-		while True:
-			value = get_pressure()
-			if value > 0:
-				return True
-			time.sleep(0.5)
-	except KeyboardInterrupt:
-		spi.close()
+IGNOERE_MIN = 1
 
 def get_pressure():
 	
@@ -28,15 +18,32 @@ def get_pressure():
 	spi.close()
 	return value
 
-def post_server():
-	r = requests.get( SERVER_URL + '/api' )
-	print(r.status_code)
-	print(r.content)
-	print(r.json())
+def is_pressed():
+	if get_pressure() > 0:
+		return True
+	else:
+		return False
+
+def wait_status_change(current_status):
+	while True:
+		new_status = is_pressed()
+		if current_status != new_status :
+			print('status chenged: ' , new_status)
+			time.sleep(60 * IGNOERE_MIN)
+			if new_status == is_pressed() :
+				return new_status
+		time.sleep(0.5)
 	
-	
+def send_request():
+	if get_pressure() == 0:
+		requests.get( SERVER_URL + '/api/stand_up' )
+	else:
+		requests.get( SERVER_URL + '/api/sit_down' )
+	print('request sent')
+
 if __name__ =='__main__':
 	while True:
-		wait_press()
-		post_server()
+		current_status = is_pressed()
+		wait_status_change(current_status)
+		send_request()
 
