@@ -5,7 +5,7 @@ import time
 import subprocess
 import requests
 
-SERVER_URL = 'http://localhost:5000'
+SERVER_URL = 'http://localhost:8080'
 IGNOERE_MIN = 1
 
 def get_pressure():
