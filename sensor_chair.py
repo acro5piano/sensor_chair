@@ -32,5 +32,5 @@ if __name__ =='__main__':
 	while True:
 		current_status = is_pressed()
 		send_request()
-		time.sleep(5*60)
+		time.sleep(5)
 
