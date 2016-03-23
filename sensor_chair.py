@@ -20,30 +20,17 @@ def get_pressure():
 
 def is_pressed():
 	if get_pressure() > 0:
-		return True
+		return 1
 	else:
-		return False
-
-def wait_status_change(current_status):
-	while True:
-		new_status = is_pressed()
-		if current_status != new_status :
-			print('status chenged: ' , new_status)
-			time.sleep(60 * IGNOERE_MIN)
-			if new_status == is_pressed() :
-				return new_status
-		time.sleep(0.5)
+		return 0
 	
 def send_request():
-	if get_pressure() == 0:
-		requests.get( SERVER_URL + '/api/stand_up' )
-	else:
-		requests.get( SERVER_URL + '/api/sit_down' )
-	print('request sent')
+	requests.post( SERVER_URL + '/api/chair_log',{"value":is_pressed()} )
+	print('request sent',is_pressed())
 
 if __name__ =='__main__':
 	while True:
 		current_status = is_pressed()
-		wait_status_change(current_status)
 		send_request()
+		time.sleep(5*60)
 
